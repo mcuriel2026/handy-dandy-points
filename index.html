@@ -133,8 +133,8 @@
   <section class="card">
     <div class="sect"><span class="ic">🐕</span>Dogs in the ring</div>
     <label for="quick">Counts: class dogs · class bitches · champion dogs · champion bitches</label>
-    <div class="hint" style="margin:0 0 6px">Separate with a dot (2.5.3.1), a dash or a space, or use the + and − buttons.</div>
-    <input type="text" id="quick" inputmode="decimal" enterkeyhint="done" placeholder="2.5.3.1" autocomplete="off">
+    <div class="hint" style="margin:0 0 6px">On a phone, tap the dot key to add a dash. Or tap any number below and type it, or use + and −.</div>
+    <input type="text" id="quick" inputmode="decimal" enterkeyhint="done" placeholder="2-5-3-1" autocomplete="off">
     <div class="steppers" id="steppers"></div>
     <details>
       <summary>Veterans (Grand Champion points only)</summary>
@@ -288,6 +288,8 @@ document.querySelectorAll('.stp .v').forEach(el => {
 });
 function syncQuick(){ $('quick').value = (C.cd||C.cb||C.chd||C.chb) ? `${C.cd}-${C.cb}-${C.chd}-${C.chb}` : ''; }
 $('quick').addEventListener('input', e => {
+  const fixed = e.target.value.replace(/[^\d]+/g, '-');
+  if (fixed !== e.target.value) e.target.value = fixed;
   const nums = (e.target.value.match(/\d+/g) || []).map(Number);
   ['cd','cb','chd','chb'].forEach((k,i) => C[k] = nums[i] || 0);
   update();
