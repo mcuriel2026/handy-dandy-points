@@ -27,16 +27,16 @@
   body.t-meadow{--h1:#1f5b3a;--h2:#4f9a3f;--accent:#2b7a4b;--accent-soft:#e5f3ea;--bg:#f1f5ee;--rib:#1d4e89;--rib2:#e0a526}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.4}
-  header{position:relative;text-align:center;padding:calc(22px + env(safe-area-inset-top)) 16px 6px;max-width:820px;margin:0 auto}
-  .logo{width:96px;height:96px;margin:0 auto;border-radius:50%;background:#fff;border:3px solid var(--rib2);box-shadow:0 0 0 5px var(--bg),0 0 0 6px var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  header{position:relative;text-align:center;padding:calc(10px + env(safe-area-inset-top)) 16px 2px;max-width:820px;margin:0 auto}
+  .logo{width:60px;height:60px;margin:0 auto;border-radius:50%;background:#fff;border:2px solid var(--rib2);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
   .logo img{width:86%;height:86%;object-fit:contain;margin-top:2px}
-  .appname{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:34px;line-height:1.05;margin:12px 0 2px;color:var(--ink);letter-spacing:.01em}
-  .by{font-size:11.5px;font-weight:700;letter-spacing:.22em;color:var(--rib2)}
-  header .sub{font-size:11.5px;color:var(--muted);margin-top:6px}
-  .themes{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;display:flex;gap:6px}
+  .appname{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:26px;line-height:1.05;margin:6px 0 1px;color:var(--ink);letter-spacing:.01em}
+  .by{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--rib2)}
+  header .sub{font-size:10.5px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .themes{position:absolute;top:calc(8px + env(safe-area-inset-top));right:14px;display:flex;gap:6px}
   .themes button{width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
   .themes button.on{box-shadow:0 0 0 2px var(--ink)}
-  @media (max-width:440px){.appname{font-size:30px}.logo{width:84px;height:84px}}
+  @media (max-width:440px){.appname{font-size:24px}.logo{width:54px;height:54px}}
   .card h2 .ic,.sect .ic{display:inline-block;width:18px;text-align:center;margin-right:4px}
   .sect{font-family:Fredoka,Inter,sans-serif;font-size:16px;font-weight:600;color:var(--accent);margin:0 0 10px}
   main{max-width:820px;margin:0 auto;padding:12px}
@@ -380,7 +380,7 @@ function applySchedule(id){
   $('schedSel').innerHTML = list.map(s => `<option value="${esc(s.id)}">${esc(s.label)}</option>`).join('');
   $('schedSel').value = SCHED.id;
   $('rmSched').style.display = SCHED.id===BUILTIN.id ? 'none' : '';
-  $('hsub').textContent = `AKC schedule effective ${SCHED.effective} · ${Object.keys(SCHED.states).length} divisions · ${SCHED.order.filter(b=>!/^ALL OTHER/i.test(b)).length} breeds & varieties`;
+  $('hsub').textContent = `AKC points schedule · effective ${SCHED.effective}`;
   stateToDiv = {};
   Object.entries(SCHED.states).forEach(([d, l]) => l.forEach(s => stateToDiv[s] = +d));
   const curState = $('state').value || store.get('state');
