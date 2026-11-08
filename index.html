@@ -63,7 +63,8 @@
   .stp .lbl{font-size:11.5px;font-weight:600;color:var(--muted)}
   .stp .ctl{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
   .stp button{width:36px;height:36px;border-radius:8px;border:1px solid #cfc8ba;background:#fff;font-size:20px;cursor:pointer;color:var(--accent)}
-  .stp .v{font-size:22px;font-weight:700;min-width:30px}
+  .stp .v{font:inherit;font-size:22px;font-weight:700;width:56px;text-align:center;border:1px solid transparent;border-radius:8px;padding:4px 0;background:transparent;color:var(--ink)}
+  .stp .v:focus{border-color:var(--accent);background:#fff;outline:none}
   details{margin-top:10px;font-size:13.5px}
   details summary{cursor:pointer;color:var(--accent);font-weight:600}
   .hint{font-size:12px;color:var(--muted);margin-top:8px}
@@ -131,8 +132,9 @@
 
   <section class="card">
     <div class="sect"><span class="ic">🐕</span>Dogs in the ring</div>
-    <label for="quick">Counts: class dogs - class bitches - champion dogs - champion bitches</label>
-    <input type="text" id="quick" inputmode="numeric" placeholder="2-5-3-1" autocomplete="off">
+    <label for="quick">Counts: class dogs · class bitches · champion dogs · champion bitches</label>
+    <div class="hint" style="margin:0 0 6px">Separate with a dot (2.5.3.1), a dash or a space, or use the + and − buttons.</div>
+    <input type="text" id="quick" inputmode="decimal" enterkeyhint="done" placeholder="2.5.3.1" autocomplete="off">
     <div class="steppers" id="steppers"></div>
     <details>
       <summary>Veterans (Grand Champion points only)</summary>
@@ -270,12 +272,19 @@ $('star').onclick = () => {
 // ---------- Counts ----------
 const C = { cd:0, cb:0, chd:0, chb:0, vd:0, vb:0 };
 const LBL = { cd:'Class dogs', cb:'Class bitches', chd:'Champion dogs', chb:'Champion bitches', vd:'Veteran dogs', vb:'Veteran bitches' };
-function stepper(k){ return `<div class="stp"><div class="lbl">${LBL[k]}</div><div class="ctl"><button data-k="${k}" data-d="-1" aria-label="Fewer ${LBL[k]}">−</button><span class="v" id="v_${k}">0</span><button data-k="${k}" data-d="1" aria-label="More ${LBL[k]}">+</button></div></div>`; }
+function stepper(k){ return `<div class="stp"><div class="lbl">${LBL[k]}</div><div class="ctl"><button data-k="${k}" data-d="-1" aria-label="Fewer ${LBL[k]}">−</button><input class="v" id="v_${k}" type="text" inputmode="numeric" pattern="[0-9]*" value="0" aria-label="${LBL[k]}" autocomplete="off"><button data-k="${k}" data-d="1" aria-label="More ${LBL[k]}">+</button></div></div>`; }
 $('steppers').innerHTML = ['cd','cb','chd','chb'].map(stepper).join('');
 $('vsteppers').innerHTML = ['vd','vb'].map(stepper).join('');
 document.querySelectorAll('.stp button').forEach(b => b.onclick = () => {
   const k = b.dataset.k; C[k] = Math.max(0, C[k] + (+b.dataset.d));
   syncQuick(); update();
+});
+document.querySelectorAll('.stp .v').forEach(el => {
+  const k = el.id.slice(2);
+  el.addEventListener('focus', () => { el.placeholder = String(C[k]); el.value = ''; });
+  el.addEventListener('input', () => { el.value = el.value.replace(/\D/g,'').slice(0,3); C[k] = parseInt(el.value,10) || 0; syncQuick(); update(); });
+  el.addEventListener('blur', () => { el.placeholder = ''; el.value = C[k]; });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') el.blur(); });
 });
 function syncQuick(){ $('quick').value = (C.cd||C.cb||C.chd||C.chb) ? `${C.cd}-${C.cb}-${C.chd}-${C.chb}` : ''; }
 $('quick').addEventListener('input', e => {
@@ -294,7 +303,7 @@ function cell(p, note){
 }
 
 function update(){
-  ['cd','cb','chd','chb','vd','vb'].forEach(k => $('v_'+k).textContent = C[k]);
+  ['cd','cb','chd','chb','vd','vb'].forEach(k => { const el = $('v_'+k); if (document.activeElement !== el) el.value = C[k]; });
   const div = stateToDiv[$('state').value], breed = $('breed').value;
   store.set('state', $('state').value); if (breed) store.set('breed', breed);
   $('divtag').textContent = `Division ${div}: ` + SCHED.states[div].join(', ');
